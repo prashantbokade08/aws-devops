@@ -1,0 +1,40 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - echo Installing dependencies...
+      - sudo apt-get update
+      - sudo apt-get install -y nginx
+  pre_build:
+    commands:
+      - echo Configuring Nginx...
+      - |
+        sudo tee /etc/nginx/sites-available/default > /dev/null <<EOL
+        server {
+            listen 80;
+            root /var/www/html;
+            index index.html;
+            
+            server_name localhost;
+            
+            location / {
+                try_files \$uri \$uri/ =404;
+            }
+        }
+        EOL
+      - sudo ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/
+  build:
+    commands:
+      - echo Building the website...
+      - sudo mkdir -p /var/www/html
+      - sudo cp -r * /var/www/html/
+      - sudo chown -R www-data:www-data /var/www/html
+  post_build:
+    commands:
+      - echo Starting Nginx...
+      - sudo service nginx restart
+      - echo Build completed on `date`
+artifacts:
+  files:
+    - '**/*'
