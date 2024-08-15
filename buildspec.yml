@@ -9,6 +9,8 @@ phases:
   pre_build:
     commands:
       - echo Configuring Nginx...
+      - sudo mkdir -p /etc/nginx/sites-available
+      - sudo mkdir -p /etc/nginx/sites-enabled
       - |
         sudo tee /etc/nginx/sites-available/default > /dev/null <<EOL
         server {
@@ -23,7 +25,7 @@ phases:
             }
         }
         EOL
-      - sudo ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/
+      - sudo ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
   build:
     commands:
       - echo Building the website...
