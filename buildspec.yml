@@ -6,6 +6,7 @@ phases:
       - echo Installing dependencies...
       - sudo apt-get update
       - sudo apt-get install -y nginx
+
   pre_build:
     commands:
       - echo Configuring Nginx...
@@ -26,17 +27,23 @@ phases:
         }
         EOL
       - sudo ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
+
   build:
     commands:
       - echo Building the website...
       - sudo mkdir -p /var/www/html
       - sudo cp -r * /var/www/html/
       - sudo chown -R www-data:www-data /var/www/html
+
   post_build:
     commands:
       - echo Starting Nginx...
       - sudo service nginx restart
       - echo Build completed on `date`
+
 artifacts:
   files:
-    - '**/*'
+    - /var/www/html/index.html
+  discard-paths: yes
+  base-directory: /var/www/html
+  name: website-artifact.zip
