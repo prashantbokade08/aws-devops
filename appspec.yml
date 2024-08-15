@@ -1,0 +1,34 @@
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /usr/share/nginx/html
+hooks:
+  BeforeInstall:
+    - location: /bin/bash
+      timeout: 300
+      runas: root
+      inline: 
+        - apt-get update -y
+        - apt-get install -y nginx
+
+  AfterInstall:
+    - location: /bin/bash
+      timeout: 300
+      runas: root
+      inline:
+        - systemctl start nginx
+
+  ApplicationStart:
+    - location: /bin/bash
+      timeout: 300
+      runas: root
+      inline:
+        - systemctl restart nginx
+
+  ValidateService:
+    - location: /bin/bash
+      timeout: 300
+      runas: root
+      inline:
+        - curl -I http://localhost
